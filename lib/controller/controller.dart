@@ -1,9 +1,7 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model.dart';
 import 'package:flutter_application_1/service.dart';
-import 'package:http/http.dart' as http;
 
 class TodoController extends ChangeNotifier {
   TextEditingController titleC = TextEditingController();
@@ -31,7 +29,7 @@ class TodoController extends ChangeNotifier {
       ));
       notifyListeners();
     } catch (e) {
-      throw e;
+      throw Exception('failed to create');
     }
   }
 
@@ -39,7 +37,9 @@ class TodoController extends ChangeNotifier {
     try {
       await ts.deleteTask(id);
       notifyListeners();
-    } catch (e) {}
+    } catch (e) {
+      throw Exception('failed to delete');
+    }
   }
 
   editTask(String id) async {
@@ -47,7 +47,7 @@ class TodoController extends ChangeNotifier {
       await ts.editTask(
           TodoModel(title: titleC.text, description: descriptionC.text), id);
     } catch (e) {
-      throw e;
+      throw Exception('failed to edit');
     }
   }
 }

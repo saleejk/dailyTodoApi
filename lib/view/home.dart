@@ -1,57 +1,3 @@
-// import 'dart:convert';
-
-// import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
-
-// class Home extends StatefulWidget {
-//   const Home({super.key});
-
-//   @override
-//   State<Home> createState() => _HomeState();
-// }
-
-// class _HomeState extends State<Home> {
-//   @override
-//   List<dynamic> productList = [];
-
-//   Future fetchData() async {
-//     final responce =
-//         await http.get(Uri.parse("https://fakestoreapi.com/products"));
-//     try {
-//       if (responce.statusCode == 200) {
-//         setState(() {
-//           productList = jsonDecode(responce.body);
-//         });
-//       }
-//     } catch (e) {
-//       throw Exception('failed to load todo');
-//     }
-//   }
-
-//   void initState() {
-//     // TODO: implement initState
-//     fetchData();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: ListView.separated(
-//           itemBuilder: (ctx, index) {
-//             Map<String, dynamic> products = productList[index];
-//             return ListTile(
-//               title: Text(
-//                 products['title'],
-//               ),
-//             );
-//           },
-//           separatorBuilder: (ctx, index) {
-//             return Divider();
-//           },
-//           itemCount: 4),
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controller/controller.dart';
 import 'package:flutter_application_1/view/add_data.dart';
@@ -61,15 +7,16 @@ import 'package:provider/provider.dart';
 class Home extends StatelessWidget {
   const Home({super.key});
 
-  @override
+  // @override
   @override
   Widget build(BuildContext context) {
     final todopro = Provider.of<TodoController>(context, listen: false);
+    print(todopro.todoList);
     return Scaffold(
       body: Consumer<TodoController>(builder: (context, pro, child) {
         todopro.getData();
         return todopro.todoList.isEmpty
-            ? Center(
+            ? const Center(
                 child: CircularProgressIndicator(),
               )
             : ListView.separated(
@@ -79,20 +26,42 @@ class Home extends StatelessWidget {
                   print("heyyyy,${list.description.runtimeType}");
 
                   return ListTile(
-                    trailing: Row(
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => EditScreen(),
-                              ));
-                            },
-                            icon: Icon(Icons.edit)),
-                        IconButton(
-                            onPressed: () {
-                              pro.deleteTask(list.id.toString());
-                            },
-                            icon: Icon(Icons.delete))
+                    // trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                    //   IconButton(
+                    //       onPressed: () {
+                    //         pro.editTask(list.id.toString());
+                    //       },
+                    //       icon: Icon(Icons.edit)),
+                    //   IconButton(
+                    //       onPressed: () {
+                    //         pro.deleteTask(list.id.toString());
+                    //       },
+                    //       icon: Icon(Icons.delete))
+                    // ]),
+                    trailing: PopupMenuButton<String>(
+                      onSelected: (result) async {
+                        if (result == "Delete") {
+                          await todopro.deleteTask(list.id.toString());
+                        } else if (result == "Edit") {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) => EditScreen(
+                              title: list.title,
+                              description: list.description,
+                              id: list.id,
+                            ),
+                          );
+                        }
+                      },
+                      itemBuilder: (context) => <PopupMenuEntry<String>>[
+                        const PopupMenuItem(
+                          child: Text('Edit'),
+                          value: "Edit",
+                        ),
+                        PopupMenuItem(
+                          child: Text('Delete'),
+                          value: "Delete",
+                        ),
                       ],
                     ),
                     title: Text(list.title.toString()),

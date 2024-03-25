@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:flutter_application_1/model.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_application_1/controller/model/model.dart';
 
 class TodoService {
   // Future<List<TodoModel>> fetchData() async {
@@ -33,7 +31,7 @@ class TodoService {
       }
     } catch (e) {
       log('$e');
-      throw e;
+      throw Exception('failed to fetch');
     }
   }
 
